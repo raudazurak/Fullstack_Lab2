@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import Table from "./table";
 
 class Comp extends React.Component {
 
     render() {
-        return <h2>Hi, I have changed!</h2>;
+        return <Table/>
     }
 }
 

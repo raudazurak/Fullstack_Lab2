@@ -128,4 +128,46 @@ router.post('/employees', async(req,res)=>{
     
   })
 
+ /* router.get('/info', async(req,res)=>
+{
+    try{
+        const employees = await Employee.find()
+        const projects = await Project.find()
+        const assignments = await Assignment.find()
+
+        res.status(200).json()
+    }
+    catch (err)
+    {
+        res.json({"error": console.log(err)})
+    }
+})*/
+
+router.get('/info', async (req, res) => {
+    try {
+        const employees = await Employee.find();
+        const projects = await Project.find();
+        const assignments = await Assignment.find();
+        const infoArray = [];
+
+        employees.forEach((employee, index) => {
+            const employeeInfo = {
+                employee_id: employee.employee_id,
+                employee_name: employee.full_name,
+                project_name: projects[index].project_name,
+                start_date: assignments[index].start_date
+            };
+            infoArray.push(employeeInfo);
+        });
+
+        res.status(200).json(infoArray);
+        console.log('All sent!')
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
   module.exports = router
