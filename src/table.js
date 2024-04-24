@@ -6,24 +6,30 @@ export default function Table() {
     const [sortConfig, setSortConfig] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:3000/info', {
-                    withCredentials: true, // Send cookies with request for authentication
-                });
+        fetchData(); // Initial data fetch
 
-                if (response.status === 200) {
-                    setInfo(response.data);
-                } else {
-                    console.error(`Failed to fetch data. Status: ${response.status}`);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        const intervalId = setInterval(fetchData, 60000); // Refresh data every minute
 
-        fetchData();
+        return () => clearInterval(intervalId); // Cleanup function to clear interval on component unmount
     }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/info', {
+                withCredentials: true, // Send cookies with request for authentication
+            });
+
+            if (response.status === 200) {
+                setInfo(response.data);
+            } else {
+                console.error(`Failed to fetch data. Status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    
 
     const handleSort = (key) => {
         if (sortConfig && sortConfig === key) {
