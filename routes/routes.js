@@ -128,34 +128,23 @@ router.post('/employees', async(req,res)=>{
     
   })
 
- /* router.get('/info', async(req,res)=>
-{
-    try{
-        const employees = await Employee.find()
-        const projects = await Project.find()
-        const assignments = await Assignment.find()
-
-        res.status(200).json()
-    }
-    catch (err)
-    {
-        res.json({"error": console.log(err)})
-    }
-})*/
-
+ 
 router.get('/info', async (req, res) => {
     try {
-        const employees = await Employee.find();
-        const projects = await Project.find();
-        const assignments = await Assignment.find();
+        // Fetch latest five employees, projects, and assignments
+        const employees = await Employee.find().sort({ _id: -1 }).limit(5);
+        const projects = await Project.find().sort({ _id: -1 }).limit(5);
+        const assignments = await Assignment.find().sort({ start_date: -1 }).limit(5);
+        
         const infoArray = [];
 
+        // Combine the latest information
         employees.forEach((employee, index) => {
             const employeeInfo = {
                 employee_id: employee.employee_id,
                 employee_name: employee.full_name,
-                project_name: projects[index].project_name,
-                start_date: assignments[index].start_date
+                project_name: projects[index] ? projects[index].project_name : "N/A",
+                start_date: assignments[index] ? assignments[index].start_date : "N/A"
             };
             infoArray.push(employeeInfo);
         });
@@ -168,6 +157,7 @@ router.get('/info', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 
   module.exports = router
